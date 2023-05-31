@@ -80,3 +80,50 @@ python manage.py runserver
 - Fork the repository and create a new branch.
 - Make your changes and submit a pull request.
 - Ensure that your code follows the project's coding conventions and passes all tests.
+
+
+Deployment Process
+To deploy the Shop Locator App to a live server using Railway.app, follow the steps below:
+
+Make sure you have generated the requirements.txt file by running the following command:
+$ pip freeze > requirements.txt
+Create a Procfile file in the root directory of your project and add the following line:
+web: gunicorn 'name-of-application.wsgi'
+Create a Procfile file in the root directory of your project and add the following line:
+web: gunicorn 'name-of-application.wsgi'
+Replace 'name-of-application' with the actual name of your Django application.
+
+Create a runtime.txt file in the root directory of your project and add the following line:
+python-3.10.2
+Replace 3.10.2 with the version of Python you are using for your project.
+
+Open the settings.py file in your project and locate the ALLOWED_HOSTS variable. Update it to the following:
+ALLOWED_HOSTS = ['*']
+This allows any host to access your application. Make sure to configure the ALLOWED_HOSTS list with appropriate domain names or IP addresses for production deployment.
+
+Add the following line to the settings.py file to configure the STATIC_ROOT directory:
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+This sets the directory where Django will collect static files.
+Run the following command to collect the static files:
+$ python manage.py collectstatic
+This will gather all the static files into the STATIC_ROOT directory.
+
+Commit and push all the changes to your GitHub repository.
+
+Sign up or log in to Railway.app at https://railway.app/.
+
+Click on the '+New' button to create a new project.
+
+Select 'GitHub Repo' as the deployment method.
+
+Choose the repository where you pushed the code.
+
+After selecting the repository, go to the project settings tab.
+
+Under the domain section, click on 'Generate Domain' to obtain a domain for your deployed application.
+
+Optionally, you can update the domain name to a custom one if desired.
+
+Your Shop Locator App is now live and accessible at the provided domain.
+
+Please make sure to replace 'name-of-application' with the actual name of your Django application and adjust other placeholders with relevant values as per your project setup.
