@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop Detail{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">{{ shop.name }}</h1>
+        <div class="row">
+            
+            <div class="col-md-6">
+                <h4>Address:</h4>
+                <p>{{ shop.address }}</p>
+                <h4>Contact:</h4>
+                <p>{{ shop.contact }}</p>
+                <h4>Description:</h4>
+                <p>{{ shop.description }}</p>
+                <a href="{% url 'shop_update' shop.id %}" class="btn btn-primary">Edit</a>
+            </div>
+           
+        </div>
+    </div>
+{% endblock %}

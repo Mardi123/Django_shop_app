@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Shop List{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Shop List</h1>
+        <div class="row">
+            {% for shop in shops %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ shop.name }}</h5>
+                        <p class="card-text">{{ shop.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'shop_detail' shop.id %}" class="btn btn-primary">View Details</a>
+                        <span><a href="{% url 'shop_delete' shop.id %}" class="btn btn-primary">Delete Shop</a></span>
+                    </div>
+                    
+                        
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
