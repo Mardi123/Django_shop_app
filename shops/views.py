@@ -52,6 +52,7 @@ class ShopQueryView(View):
         return render(request, 'shop_query.html')
     @csrf_protect
     def post(self, request):
+        cookies = request.COOKIES
         latitude = float(request.POST.get('latitude'))
         longitude = float(request.POST.get('longitude'))
         distance = float(request.POST.get('distance'))
