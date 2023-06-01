@@ -49,7 +49,7 @@ def shop_delete(request, shop_id):
     return render(request, 'shop_confirm_delete.html', {'shop': shop})
 
 class ShopQueryView(View):
-     @method_decorator(csrf_protect)
+    @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     def get(self, request):
