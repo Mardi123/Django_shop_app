@@ -4,6 +4,7 @@ from .forms import ShopForm
 from django.views import View
 from django.db.models import F, FloatField
 from django.db.models.functions import Power, Sqrt
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 
 def shop_list(request):
@@ -48,9 +49,11 @@ def shop_delete(request, shop_id):
     return render(request, 'shop_confirm_delete.html', {'shop': shop})
 
 class ShopQueryView(View):
+     @method_decorator(csrf_protect)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
     def get(self, request):
         return render(request, 'shop_query.html')
-    @csrf_protect
     def post(self, request):
         cookies = request.COOKIES
         latitude = float(request.POST.get('latitude'))
