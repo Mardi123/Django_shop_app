@@ -23,7 +23,8 @@ def shop_create(request):
         form = ShopForm(request.POST)
         if form.is_valid():
             shop = form.save()
-            return redirect('shop_detail', shop_id=shop.pk)  # Redirect to shop detail page
+            shops = Shop.objects.all()
+            return render(request, 'shop_list.html', {'shops': shops})  # Redirect to shop list page
     else:
         form = ShopForm()
     return render(request, 'shop_form.html', {'form': form})
