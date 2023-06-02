@@ -6,6 +6,7 @@ from django.db.models import F, FloatField
 from django.db.models.functions import Power, Sqrt
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import user_passes_test
 
 def shop_list(request):
     shops = Shop.objects.all()
@@ -41,6 +42,7 @@ def shop_update(request, shop_id):
         form = ShopForm(instance=shop)
     return render(request, 'shop_form.html', {'form': form})
 
+@user_passes_test(lambda u: u.is_superuser)
 @csrf_protect
 def shop_delete(request, shop_id):
     shop = get_object_or_404(Shop, pk=shop_id)
