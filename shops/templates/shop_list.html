@@ -16,7 +16,9 @@
                     </div>
                     <div class="card-footer">
                         <a href="{% url 'shop_detail' shop.id %}" class="btn btn-primary">View Details</a>
+                        {% if user.is_superuser %}
                         <span><a href="{% url 'shop_delete' shop.id %}" class="btn btn-primary">Delete Shop</a></span>
+                        {% endif %}
                     </div>
                     
                         
