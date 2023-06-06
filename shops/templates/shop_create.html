@@ -3,31 +3,81 @@
 {% block title %}Create Shop{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="my-4">Create Shop</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" class="form-control" id="address" name="address" required>
-            </div>
-            <div class="form-group">
-                <label for="contact">Contact</label>
-                <input type="text" class="form-control" id="contact" name="contact" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="image">Image</label>
-                <input type="file" class="form-control-file" id="image" name="image" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create</button>
+  <div class="container">
+    <h1 class="my-4">Create Shop</h1>
+    <div class="card">
+      <div class="card-body">
+        <form method="post" action="{% url 'shop_create' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Shop Name</label>
+            <input type="text" class="form-control" id="{{ form.name.id_for_label }}" name="{{ form.name.html_name }}" value="">
+            {% if form.name.errors %}
+              <div class="text-danger">
+                {% for error in form.name.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.latitude.id_for_label }}">Latitude</label>
+            <input type="text" class="form-control" id="{{ form.latitude.id_for_label }}" name="{{ form.latitude.html_name }}" value="{{ form.latitude.value }}">
+            {% if form.latitude.errors %}
+              <div class="text-danger">
+                {% for error in form.latitude.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.longitude.id_for_label }}">Longitude</label>
+            <input type="text" class="form-control" id="{{ form.longitude.id_for_label }}" name="{{ form.longitude.html_name }}" value="{{ form.longitude.value }}">
+            {% if form.longitude.errors %}
+              <div class="text-danger">
+                {% for error in form.longitude.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.address.id_for_label }}">Address</label>
+            <input type="text" class="form-control" id="{{ form.address.id_for_label }}" name="{{ form.address.html_name }}" value="{{ form.address.value }}">
+            {% if form.address.errors %}
+              <div class="text-danger">
+                {% for error in form.address.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.contact.id_for_label }}">Contact</label>
+            <input type="text" class="form-control" id="{{ form.contact.id_for_label }}" name="{{ form.contact.html_name }}" value="{{ form.contact.value }}">
+            {% if form.contact.errors %}
+              <div class="text-danger">
+                {% for error in form.contact.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" rows="4">{{ form.description.value }}</textarea>
+            {% if form.description.errors %}
+              <div class="text-danger">
+                {% for error in form.description.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary">Create</button>
         </form>
+      </div>
     </div>
+  </div>
 {% endblock %}
