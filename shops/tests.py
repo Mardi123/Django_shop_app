@@ -1,61 +1,75 @@
-from django.test import TestCase
-from django.urls import reverse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Shop
+from .forms import ShopForm
+from django.views import View
+from django.db.models import F, FloatField
+from django.db.models.functions import Power, Sqrt
 
-class ShopTestCase(TestCase):
-    def setUp(self):
-        self.shop = Shop.objects.create(name='Shop 1', address='Address 1', contact='Contact 1', description='Description 1')
+@login_required
+def admin_panel(request):
+    return render(request, 'admin_panel.html')
 
-    def test_shop_list_view(self):
-        response = self.client.get(reverse('shop_list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.shop.name)
+@login_required
+def shop_list(request):
+    shops = Shop.objects.all()
+    return render(request, 'shop_list.html', {'shops': shops})
 
-    def test_shop_detail_view(self):
-        response = self.client.get(reverse('shop_detail', args=[self.shop.pk]))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.shop.name)
-        self.assertContains(response, self.shop.address)
-        self.assertContains(response, self.shop.contact)
-        self.assertContains(response, self.shop.description)
-class ShopQueryViewTests(TestCase):
-    def setUp(self):
-        self.shop1 = Shop.objects.create(name='Shop 1', address='Address 1', contact='Contact 1', description='Description 1', latitude=1.0, longitude=1.0)
-        self.shop2 = Shop.objects.create(name='Shop 2', address='Address 2', contact='Contact 2', description='Description 2', latitude=2.0, longitude=2.0)
-        self.shop3 = Shop.objects.create(name='Shop 3', address='Address 3', contact='Contact 3', description='Description 3', latitude=3.0, longitude=3.0)
+@login_required
+def shop_detail(request, shop_id):
+    shop = get_object_or_404(Shop, pk=shop_id)
+    return render(request, 'shop_detail.html', {'shop': shop})
 
-    def test_shop_query_results(self):
-        response = self.client.post(reverse('shop_query'), {
-            'latitude': 0.0,
-            'longitude': 0.0,
-            'distance': 2.0
-        })
+@login_required
+def shop_get(request):
+    return render(request, 'base.html')
 
-        self.assertEqual(response.status_code, 200)  # Check if the view returns a successful response
-        self.assertTemplateUsed(response, 'shop_query_results.html')  # Check if the correct template is used
+@login_required
+def shop_create(request):
+    if request.method == 'POST':
+        form = ShopForm(request.POST)
+        if form.is_valid():
+            shop = form.save()
+            return redirect('shop_list')
+    else:
+        form = ShopForm()
+    return render(request, 'shop_create.html', {'form': form})
 
-        self.assertContains(response, self.shop1.name)  # Check if shop 1 is in the response
-        self.assertNotContains(response, self.shop2.name)  # Check if shop 2 is not in the response
-        self.assertNotContains(response, self.shop3.name)  # Check if shop 3 is not in the response
+@login_required
+def shop_update(request, shop_id):
+    shop = get_object_or_404(Shop, pk=shop_id)
 
-    def test_shop_query_results_no_shops(self):
-        response = self.client.post(reverse('shop_query'), {
-            'latitude': 10.0,
-            'longitude': 10.0,
-            'distance': 2.0
-        })
+    if request.method == 'POST':
+        form = ShopForm(request.POST, instance=shop)
+        if form.is_valid():
+            form.save()
+            return redirect('shop_detail', shop_id=shop_id)
+    else:
+        form = ShopForm(instance=shop)
 
-        self.assertEqual(response.status_code, 200)  # Check if the view returns a successful response
-        self.assertTemplateUsed(response, 'shop_query_results.html')  # Check if the correct template is used
+    return render(request, 'shop_update.html', {'form': form, 'shop_id': shop_id})
 
-        self.assertNotContains(response, self.shop1.name)  # Check if shop 1 is not in the response
-        self.assertNotContains(response, self.shop2.name)  # Check if shop 2 is not in the response
-        self.assertNotContains(response, self.shop3.name)  # Check if shop 3 is not in the response
+@login_required
+def shop_delete(request, shop_id):
+    shop = get_object_or_404(Shop, pk=shop_id)
+    if request.method == 'POST':
+        shop.delete()
+        return redirect('shop_list')
+    return render(request, 'shop_confirm_delete.html', {'shop': shop})
 
-    def test_shop_query_view_get(self):
-        response = self.client.get(reverse('shop_query'))
+class ShopQueryView(View):
+    def get(self, request):
+        return render(request, 'shop_query.html')
+    
+    def post(self, request):
+        latitude = float(request.POST.get('latitude'))
+        longitude = float(request.POST.get('longitude'))
+        distance = float(request.POST.get('distance'))
 
-        self.assertEqual(response.status_code, 200)  # Check if the view returns a successful response
-        self.assertTemplateUsed(response, 'shop_query.html')  # Check if the correct template is used
+        shops = Shop.objects.annotate(
+            lat_diff=Power(F('latitude') - latitude, 2),
+            lon_diff=Power(F('longitude') - longitude, 2),
+            distance=Sqrt(F('lat_diff') + F('lon_diff')),
+        ).filter(distance__lte=distance)
 
-
+        return render(request, 'shop_query_results.html', {'shops': shops})

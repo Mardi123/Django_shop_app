@@ -8,32 +8,33 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
+
+@login_required
 def admin_panel(request):
     return render(request, 'admin_panel.html')
 
-
+@login_required
 def shop_list(request):
     shops = Shop.objects.all()
     return render(request, 'shop_list.html', {'shops': shops})
 
-
+@login_required
 def shop_detail(request, shop_id):
     shop = get_object_or_404(Shop, pk=shop_id)
     return render(request, 'shop_detail.html', {'shop': shop})
 
-
 def shop_get(request):
     return render(request, 'base.html')
 
-
+@login_required
 @csrf_protect
 def shop_create(request):
-    print("Hello")
     if request.method == 'POST':
         form = ShopForm(request.POST)
-        print("Hello")
         if form.is_valid():
             print("saving")
             shop = form.save()
@@ -42,6 +43,7 @@ def shop_create(request):
         form = ShopForm()
     return render(request, 'shop_create.html', {'form': form})
 
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 @csrf_protect
 def shop_update(request, shop_id):
@@ -58,7 +60,7 @@ def shop_update(request, shop_id):
     return render(request, 'shop_update.html', {'form': form, 'shop_id': shop_id})
 
 
-
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 @csrf_protect
 def shop_delete(request, shop_id):
@@ -68,7 +70,7 @@ def shop_delete(request, shop_id):
         return redirect('shop_list')
     return render(request, 'shop_confirm_delete.html', {'shop': shop})
 
-
+@method_decorator(login_required, name='dispatch')
 class ShopQueryView(View):
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
