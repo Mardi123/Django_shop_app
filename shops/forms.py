@@ -8,7 +8,7 @@ class ShopForm(forms.ModelForm):
         
     def clean_name(self):
         name = self.cleaned_data['name']
-        if Shop.objects.filter(name=name).exists():
+        if self.instance is None and Shop.objects.filter(name=name).exists():
             raise forms.ValidationError("Shop with this name already exists.")
         return name
     

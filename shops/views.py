@@ -46,14 +46,17 @@ def shop_create(request):
 @csrf_protect
 def shop_update(request, shop_id):
     shop = get_object_or_404(Shop, pk=shop_id)
+
     if request.method == 'POST':
         form = ShopForm(request.POST, instance=shop)
         if form.is_valid():
             form.save()
-            return redirect('shop_list')
+            return redirect('shop_detail', shop_id=shop_id)
     else:
         form = ShopForm(instance=shop)
-    return render(request, 'shop_form.html', {'form': form})
+
+    return render(request, 'shop_update.html', {'form': form, 'shop_id': shop_id})
+
 
 
 @user_passes_test(lambda u: u.is_superuser)
