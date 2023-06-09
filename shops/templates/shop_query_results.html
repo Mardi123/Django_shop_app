@@ -11,9 +11,14 @@
                     <div class="card mb-4">
                         
                         <div class="card-body">
+                            {% if shop.user == request.user or request.user.is_superuser %}
                             <h5 class="card-title">{{ shop.name }}</h5>
                             <p class="card-text">{{ shop.description }}</p>
                             <a href="{% url 'shop_detail' shop.id %}" class="btn btn-primary">View Details</a>
+                            {% else %}
+                                    <p>No shops found.</p>
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>

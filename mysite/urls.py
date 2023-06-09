@@ -5,7 +5,7 @@ from django.urls import path, include
 from django.contrib.auth.decorators import login_required
 from shops.views import (
     shop_list, shop_detail, shop_create, shop_update, ShopQueryView, shop_get,
-    shop_delete, admin_panel
+    shop_delete, admin_panel, signup
 )
 
 urlpatterns = [
@@ -22,6 +22,7 @@ urlpatterns = [
     ])),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(template_name='base.html'), name='logout'),
+    path('signup/', signup, name='signup'),
     
     path('', shop_list, name='home'),
 ]
